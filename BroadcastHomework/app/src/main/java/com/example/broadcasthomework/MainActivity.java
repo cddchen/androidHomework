@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d("log", intent.getStringExtra("extraKey"));
+            Toast.makeText(context, intent.getStringExtra("extraKey"), Toast.LENGTH_SHORT).show();
         }
     }
 }

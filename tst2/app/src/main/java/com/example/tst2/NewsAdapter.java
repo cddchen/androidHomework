@@ -10,10 +10,12 @@ import android.widget.TextView;;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import java.util.Set;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     private List<News> news;
+    private Set<String> nids;
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.news_item, parent, false);
@@ -36,6 +38,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         holder.titleTxt.setText(news1.Title);
         holder.sourceTxt.setText("来源：" + news1.Source);
         holder.timeTxt.setText("时间：" + news1.Time);
+        if (nids.contains(position + "")) {
+            holder.timeTxt.setTextColor(Color.parseColor("#0000FF"));
+            holder.sourceTxt.setTextColor(Color.parseColor("#0000FF"));
+            holder.titleTxt.setTextColor(Color.parseColor("#0000FF"));
+        }
     }
 
     @Override
@@ -60,10 +67,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             timeTxt = (TextView)itemView.findViewById(R.id.timeTxtview);
         }
     }
-    public NewsAdapter(List<News> _news) {
+    public NewsAdapter(List<News> _news, Set<String> _nids) {
         news = _news;
+        nids = _nids;
     }
-    //实现自定义点击事件接口
+    //实现自定义点击事件接口，因为需要判断横竖屏
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
     }
