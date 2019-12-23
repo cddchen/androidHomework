@@ -2,29 +2,56 @@ package com.example.tst8;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ClockService extends Service {
+
     public ClockService() {
     }
 
+    public class ClockBinder extends Binder {
+        public ClockService getService() {
+            return ClockService.this;
+        }
+    }
     @Override
     public IBinder onBind(Intent intent) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return new ClockBinder();
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    //利用回调接口实现服务和窗体的交互
+    private OnTimeUpListener IOnTimeUpListener;
+    public interface OnTimeUpListener {
+        void onTimeUp();
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
+    public void SetOnTimeUpListener(OnTimeUpListener onTimeUpListener) {
+        IOnTimeUpListener = onTimeUpListener;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void setTime(final String end_time) {
+        final Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");// HH:mm:ss
+                Date date = new Date(System.currentTimeMillis());
+                Log.d("Date", simpleDateFormat.format(date) + " <> " + end_time);
+                if (end_time.equals(simpleDateFormat.format(date))) {
+                    if (IOnTimeUpListener != null) {
+                        IOnTimeUpListener.onTimeUp();
+                    }
+                    timer.cancel();
+                }
+            }
+        };
+        timer.schedule(task, 1000, 1000);
     }
 }
