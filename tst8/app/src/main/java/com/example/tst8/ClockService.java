@@ -6,6 +6,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
@@ -48,6 +50,26 @@ public class ClockService extends Service {
                     if (IOnTimeUpListener != null) {
                         IOnTimeUpListener.onTimeUp();
                     }
+                    timer.cancel();
+                }
+            }
+        };
+        timer.schedule(task, 1000, 1000);
+    }
+
+    //利用广播实现与窗体交互
+    public void setTimeByBroadcast(final String end_time, final LocalBroadcastManager localBroadcastManager) {
+        final Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");// HH:mm:ss
+                Date date = new Date(System.currentTimeMillis());
+                Log.d("Date", simpleDateFormat.format(date) + " <> " + end_time);
+                if (end_time.equals(simpleDateFormat.format(date))) {
+                    Intent intent = new Intent("com.example.tst8.LOCAL_BROADCAST");
+                    intent.putExtra("Result", "Time_Up");
+                    localBroadcastManager.sendBroadcast(intent);
                     timer.cancel();
                 }
             }
