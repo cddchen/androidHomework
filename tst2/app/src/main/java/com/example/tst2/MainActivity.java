@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("hadreadnid", "" + requestCode);
             readlistdata.add(Integer.toString(requestCode));
             SharedPreferences.Editor editor = getSharedPreferences("readlist", MODE_PRIVATE).edit();
+            editor.remove("nID");
             editor.putStringSet("nID", readlistdata);
             editor.apply();
         }

@@ -41,12 +41,9 @@ public class MainActivity extends AppCompatActivity {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
         time_edit.setText(simpleDateFormat.format(new Date(System.currentTimeMillis())));
         Button confirmBt = (Button)findViewById(R.id.confirm_bt);
-        confirmBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ClockService.class);
-                bindService(intent, connection, Context.BIND_AUTO_CREATE);
-            }
+        confirmBt.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ClockService.class);
+            bindService(intent, connection, Context.BIND_AUTO_CREATE);
         });
 
         IntentFilter intentFilter = new IntentFilter();
@@ -68,6 +65,11 @@ public class MainActivity extends AppCompatActivity {
 
             ClockService clockService = ((ClockService.ClockBinder)service).getService();
             //回调接口
+            clockService.SetOnTimeUpListener(() -> {
+                Log.d("ClockService", "TimeUp Bind Success");
+                display_txt.setText("时间到！");
+                display_txt.setTextColor(Color.RED);
+            });
             clockService.SetOnTimeUpListener(new ClockService.OnTimeUpListener() {
                 @Override
                 public void onTimeUp() {
